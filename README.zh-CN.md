@@ -13,7 +13,7 @@ Dispatcher 在你的电脑上运行一个兼容 OpenAI API 的服务。它会分
 
 ## 为什么使用 Dispatcher？
 
-- 为 Codex、OpenAI 兼容客户端和 Anthropic 客户端提供统一的本地地址
+- 为 Claude Code、Codex 和兼容 API 的客户端提供统一的本地地址
 - 自动识别 `simple`、`medium`、`reasoning`、`complex` 四类任务
 - 提供 `auto`、`save`、`fast` 三种路由策略
 - 支持健康评分、熔断、超时保护和自动回退
@@ -73,7 +73,39 @@ export ANTHROPIC_API_KEY="your-key"
 不要把真实密钥提交到 Git。Dispatcher 从服务进程的环境变量读取凭据，
 不会自动加载 `.env` 文件。
 
-## 接入 Codex
+## 接入编程智能体
+
+### Claude Code
+
+Claude Code 可以把 Dispatcher 作为 Anthropic Messages API 网关：
+
+```bash
+ANTHROPIC_BASE_URL=http://localhost:8787 \
+ANTHROPIC_API_KEY=local-dispatcher \
+claude
+```
+
+`ANTHROPIC_BASE_URL` 使用服务根地址，不要添加 `/v1`；Claude Code 会自行拼接
+`/v1/messages`。这里的客户端占位密钥只在本机使用，不会转发给模型供应商。
+
+需要长期生效时，可以写入用户级 `~/.claude/settings.json`：
+
+```json
+{
+  "env": {
+    "ANTHROPIC_BASE_URL": "http://localhost:8787",
+    "ANTHROPIC_API_KEY": "local-dispatcher"
+  }
+}
+```
+
+Dispatcher 已支持 Anthropic Messages 请求、流式响应、工具调用、智能路由和供应商
+回退。Alpha 阶段仍在继续扩大真实账户兼容性测试范围。
+
+上游配置机制可参考 Anthropic 官方的
+[LLM 网关文档](https://docs.anthropic.com/en/docs/claude-code/llm-gateway)。
+
+### Codex
 
 在 `~/.codex/config.toml` 中加入：
 

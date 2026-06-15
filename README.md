@@ -13,7 +13,7 @@ and recent health signals, and records an explainable routing decision.
 
 ## Why Dispatcher?
 
-- One local endpoint for Codex, OpenAI-compatible clients, and Anthropic clients
+- One local endpoint for Claude Code, Codex, and compatible API clients
 - Automatic model selection across `simple`, `medium`, `reasoning`, and `complex` tasks
 - `auto`, `save`, and `fast` routing strategies
 - Provider health scoring, circuit breaking, timeout protection, and fallback
@@ -75,7 +75,42 @@ export ANTHROPIC_API_KEY="your-key"
 Never commit real keys. Dispatcher reads credentials from the service process
 environment and does not load `.env` automatically.
 
-## Connect Codex
+## Connect Your Coding Agent
+
+### Claude Code
+
+Claude Code can use Dispatcher as an Anthropic Messages API gateway:
+
+```bash
+ANTHROPIC_BASE_URL=http://localhost:8787 \
+ANTHROPIC_API_KEY=local-dispatcher \
+claude
+```
+
+`ANTHROPIC_BASE_URL` uses the service root without `/v1`; Claude Code appends
+`/v1/messages` itself. The placeholder client key is accepted locally and is
+not forwarded to model providers.
+
+For a persistent user-level setup, add this to `~/.claude/settings.json`:
+
+```json
+{
+  "env": {
+    "ANTHROPIC_BASE_URL": "http://localhost:8787",
+    "ANTHROPIC_API_KEY": "local-dispatcher"
+  }
+}
+```
+
+Dispatcher supports Anthropic Messages requests, streaming responses, tool
+calls, routing, and provider fallback. Broader real-account compatibility
+testing is still in progress during the alpha.
+
+See Anthropic's
+[LLM gateway documentation](https://docs.anthropic.com/en/docs/claude-code/llm-gateway)
+for the upstream Claude Code gateway model.
+
+### Codex
 
 Add this profile to `~/.codex/config.toml`:
 
